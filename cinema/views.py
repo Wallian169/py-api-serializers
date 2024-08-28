@@ -16,10 +16,11 @@ from cinema.serializers import (
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
 
     def get_queryset(self):
         queryset = self.queryset
-        if self.action == "list" or self.action == "retrieve":
+        if self.action in ("list", "retrieve"):
             queryset = queryset.prefetch_related("genres", "actors")
         return queryset
 
@@ -28,8 +29,7 @@ class MovieViewSet(viewsets.ModelViewSet):
             return MovieListSerializer
         elif self.action == "retrieve":
             return MovieRetrieveSerializer
-        else:
-            return MovieSerializer
+        return self.serializer_class
 
 
 class ActorViewSet(viewsets.ModelViewSet):
